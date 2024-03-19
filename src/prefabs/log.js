@@ -3,5 +3,6 @@ class log extends Phaser.GameObjects.Sprite {
         super(scene, x, y, texture)
         scene.add.existing(this)
         scene.physics.add.existing(this)
+        this.body.setImmovable(true)
     }
 }

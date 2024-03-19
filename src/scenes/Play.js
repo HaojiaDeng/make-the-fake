@@ -23,54 +23,46 @@ class Play extends Phaser.Scene {
         this.load.image('log','./assets/log.png')
         this.load.audio('footstep','./assets/footstep.mp3')
         this.load.image('exit','./assets/exit.png')
-        
+        this.load.atlas('flares', 'assets/flare.png', 'assets/flare.json')
     }
 
     create() {
-        this.add.tileSprite(0, 0, 1280, 720, 'map').setOrigin(0, 0);
+        this.add.tileSprite(0, 0, 1280, 720, 'map').setOrigin(0, 0)
+        //add player
         this.player = new Player(this, 30, 360).setOrigin(0, 0).setScale(2)
         this.physics.world.setBounds(0, 0, 1280, 720)
         this.cameras.main.setBounds(0, 0, 1280, 720)
+        //add images
         this.add.image(640, 0, 'barrier').setOrigin(0.5, 0)
         this.add.image(640, 675, 'barrier').setOrigin(0.5, 0)
-        this.tower1 = new tower(this, 70, 480, 'tower')
-        this.tower1.setOrigin(0.5, 0).setScale(0.4)
-        this.tower2 = new tower(this, 70, 100, 'tower')
-        this.tower2.setOrigin(0.5, 0).setScale(0.4)
-        this.tower3 = new tower(this, 1100, 40, 'tower')
-        this.tower3.setOrigin(0.5, 0).setScale(0.4)
-        // collider FAILED!
-        this.physics.add.collider(this.player, this.tower1)
-        this.physics.add.collider(this.player, this.tower2)
-        this.tent1 = new tent(this, 600, 430, 'tent')
-        this.tent1.setOrigin(0.5, 0).setScale(2)
-        this.tent2 = new tent(this, 600, 330, 'tent')
-        this.tent2.setOrigin(0.5, 0).setScale(2)
-        this.physics.add.collider(this.player, this.tent1)
-        this.physics.add.collider(this.player, this.tent2)
-        this.add.image(500,450,'campfire').setOrigin(0.5, 0).setScale(2.0)
-        this.tree1 = new tree(this, 720, 330, 'tree')
-        this.tree1.setOrigin(0.5, 0).setScale(2)
-        this.physics.add.collider(this.player, this.tree1)
+        this.add.image(500,500,'campfire')
         
-        this.tree3 = new tree(this, 820, 330, 'tree')
-        this.tree3.setOrigin(0.5, 0).setScale(2)
-        this.physics.add.collider(this.player, this.tree3)
-        this.tree4 = new tree(this, 920, 330, 'tree')
-        this.tree4.setOrigin(0.5, 0).setScale(2)
-        this.physics.add.collider(this.player, this.tree4)
-        this.jeep1 = new jeep(this, 880, 90, 'jeep')
-        this.physics.add.collider(this.player, this.jeep1)
-        this.jeep1.setOrigin(0.5, 0).setScale(1.7)
-        this.jeep2 = new jeep(this, 720, 90, 'jeep')
-        this.physics.add.collider(this.player, this.jeep2)
-        this.jeep2.setOrigin(0.5, 0).setScale(1.7)
-
-        this.log1 = new log(this, 1030, 330, 'log')
-        this.physics.add.collider(this.player, this.log1)
-        this.log2 = new log(this, 1150, 430, 'log')
-        this.physics.add.collider(this.player, this.log2)
-
+        this.tower1 = this.physics.add.staticSprite(70, 480, 'tower').setOrigin(0.5, 0).setScale(0.4);
+        this.tower2 = this.physics.add.staticSprite(70, 100, 'tower').setOrigin(0.5, 0).setScale(0.4);
+        this.tower3 = this.physics.add.staticSprite(1100, 40, 'tower').setOrigin(0.5, 0).setScale(0.4);
+        this.tent1 = this.physics.add.staticSprite(600, 430, 'tent').setOrigin(0.5, 0).setScale(2).setOffset(0,70)
+        this.tent2 = this.physics.add.staticSprite(600, 330, 'tent').setOrigin(0.5, 0).setScale(2).setOffset(0,70)
+        this.tree1 = this.physics.add.staticSprite(720, 330, 'tree').setOrigin(0.5, 0).setScale(2).setOffset(0,140)
+        this.tree3 = this.physics.add.staticSprite(820, 330, 'tree').setOrigin(0.5, 0).setScale(2).setOffset(0,140)
+        this.tree4 = this.physics.add.staticSprite(920, 330, 'tree').setOrigin(0.5, 0).setScale(2).setOffset(0,140)
+        this.log1 = this.physics.add.staticSprite(1030, 330, 'log').setOrigin(0.5, 0).setScale(1.3).setOffset(0,50)
+        this.log2 = this.physics.add.staticSprite(1150, 430, 'log').setOrigin(0.5, 0).setScale(1.3).setOffset(0,50)
+        this.jeep1 = this.physics.add.staticSprite(880, 90, 'jeep').setOrigin(0.5, 0).setScale(1.3).setOffset(0,35)
+        this.jeep2 = this.physics.add.staticSprite(720, 90, 'jeep').setOrigin(0.5, 0).setScale(1.3).setOffset(0,35)
+        this.physics.add.collider(this.player, [this.tower3, this.tent1, this.tent2, this.tree1, this.tree3, this.tree4, this.log1, this.log2, this.jeep1, this.jeep2])
+        //particle effect
+        this.particles = this.add.particles('flare')
+        const flame = this.add.particles(495, 500, 'flares',
+            {
+                color: [ 0x040d61, 0xfacc22, 0xf89800, 0xf83600, 0x9f0404, 0x4b4a4f, 0x353438, 0x040404 ],
+                lifespan: 1500,
+                angle: { min: -90, max: -50 },
+                scale: 0.75,
+                speed: { min: 10, max: 30 },
+                advance: 2000,
+                blendMode: 'ADD'
+            })
+        //adding enemies
         this.StationaryEnemy1 = new StationaryEnemy(this,530,400,'smoke2')
         this.StationaryEnemy2 = new StationaryEnemy(this,1050,60,'smoke2')
         this.enemy1 = new Enemy(this, 150, 100, 100, 500)
@@ -79,7 +71,7 @@ class Play extends Phaser.Scene {
         this.exit = new Exit(this,1250,360,'exit')
 
         //narrativeText
-        this.narrativeText = this.add.text(100, 240, 'I need to get to the exit quietly.', {
+        this.narrativeText = this.add.text(100, 240, 'I need to get to that red flag quietly.', {
             fontSize: '16px',
             fill: '#FFFFFF',
             padding: { x: 10, y: 5 },
@@ -115,6 +107,7 @@ class Play extends Phaser.Scene {
             this.enemy1.update()
             this.enemy2.update()
             this.enemy3.update()
+           
     
             //condition
             const exitDistance = Phaser.Math.Distance.Between(this.player.x, this.player.y, this.exit.x, this.exit.y);
@@ -138,26 +131,24 @@ class Play extends Phaser.Scene {
         let enemies = [this.StationaryEnemy1, this.StationaryEnemy2, this.enemy1, this.enemy2, this.enemy3]
         enemies.forEach((enemy) => {
             const distance = Phaser.Math.Distance.Between(this.player.x, this.player.y, enemy.x, enemy.y)
-            const detectionRange = this.player.isCrouching ? 60 : 150
+            const detectionRange = this.player.isCrouching ? 60 : 110
             if (distance < detectionRange) {
                 this.triggerGameOver()
                 return
             }
         })
     }
-    
     // Method to handle the game over logic
-// Method to handle the game over logic
-triggerGameOver() {
-    this.gameOver = true;
-    this.sound.play('spot');
-    let spottedText = this.add.text(this.cameras.main.centerX, this.cameras.main.centerY, 'You have been spotted!', {
-        fontSize: '48px',
-        fill: '#FF0000',
-        fontStyle: 'bold'
-    }).setOrigin(0.5).setScrollFactor(0)
+    triggerGameOver() {
+        this.gameOver = true;
+        this.sound.play('spot');
+        let spottedText = this.add.text(this.cameras.main.centerX, this.cameras.main.centerY, 'You have been spotted!', {
+            fontSize: '48px',
+            fill: '#FF0000',
+            fontStyle: 'bold'
+        }).setOrigin(0.5).setScrollFactor(0)
 
-  
+    //text animation
     this.tweens.add({
         targets: spottedText,
         x: { from: this.cameras.main.centerX - 200, to: this.cameras.main.centerX },
@@ -174,7 +165,7 @@ triggerGameOver() {
 }
 
     
-    // Method to handle player input for restarting or returning to the menu
+    // keys for restarting or returning to the menu
     handleInput() {
         if (Phaser.Input.Keyboard.JustDown(this.keyR)) {
             this.scene.restart()

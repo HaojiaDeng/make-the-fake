@@ -4,6 +4,7 @@ class Player extends Phaser.GameObjects.Sprite {
         scene.add.existing(this)
         scene.physics.add.existing(this)
         this.body.setCollideWorldBounds(true)
+        
         // Player properties
         this.isCrouching = false // Initial state - not crouching
         this.speed = 50 // Default speed when standing
