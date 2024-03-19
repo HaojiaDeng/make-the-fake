@@ -13,19 +13,24 @@ class Tutorial extends Phaser.Scene {
             color: "#ffffff" 
         }
         this.BG = this.add.tileSprite(0, 0, 640, 480, 'BG2').setOrigin(0, 0)
-        this.add.text(300, 150, 
-         `
-         Don't get spotted!
-         You are ordered to pass through enemy-occupied areas
-         while wearing only a ghillie suit.
-         No shooting is allowed.
-         While moving, you will have a greater range of being spotted.
-         Use the arrow keys to move the character.
-         Press the Control to crawl.
-         You'll have a shorter range of detection in a creeping situation.
-         GL&HF!
+        this.instructionText = this.add.text(this.cameras.main.centerX, this.cameras.main.centerY-50,
+        `"Attention, soldier!
+        Welcome to the field exercise.
         
-        `, menuConfig).setOrigin(0.5)
+        Your mission is to traverse enemy-occupied terrain undetected—ghillie suit on, weapons hold. Remember, movement increases visibility, so keep it stealthy. Navigate using arrow keys and hit the deck with Control to crawl. Crawling reduces your detection radius.
+        
+        Stay sharp, stay silent, stay alive.
+        Good luck, have fun. Dismissed!"
+        
+         `
+            , {
+            fontSize: '25px',
+            fontStyle: 'bold',
+            color: '#FFFFFF',
+            align: 'center',
+            wordWrap: { width: this.cameras.main.width - 40, useAdvancedWrap: true }
+        }).setOrigin(0.5, 0.5);
+
 
         menuConfig.fontSize = "16px"
         this.add.text(500, 400, "Press 'B' to get back to the Menu page", menuConfig).setOrigin(0.5)
