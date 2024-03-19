@@ -78,23 +78,26 @@ class Play extends Phaser.Scene {
         this.enemy3 = new Enemy(this, 100, 640, 100, 350)
         this.exit = new Exit(this,1250,360,'exit')
 
-        // narrativeText
-        //this.narrativeText = this.add.text(100, 240, 'I need to get to the exit quietly.', {
-            //fontSize: '16px',
-            //fill: '#FFFFFF',
-            //padding: { x: 10, y: 5 },
-            //wordWrap: { width: 800 }
-        //}).setScrollFactor(0).setDepth(30)
-        this.cameras.main.startFollow(this.player, true, 0.05, 0.05)
+        //narrativeText
+        this.narrativeText = this.add.text(100, 240, 'I need to get to the exit quietly.', {
+            fontSize: '16px',
+            fill: '#FFFFFF',
+            padding: { x: 10, y: 5 },
+            wordWrap: { width: 800 }
+        }).setScrollFactor(0).setDepth(30)
+        
     
-        // Cutscene
-        //this.cameras.main.pan(this.physics.world.bounds.width, 360, 10000, 'Power2', true, (camera, progress) => {
-            //if (progress === 1) {
-                //
-                //this.cutsceneOver = true
-                //this.narrativeText.setVisible(false)
-            //}
-        //});
+         //Cutscene
+        this.cameras.main.pan(this.physics.world.bounds.width, 360, 10000, 'Power2', true, (camera, progress) => {
+            if (progress === 1) {
+                this.cameras.main.startFollow(this.player, true, 0.05, 0.05)
+                this.cutsceneOver = true
+                this.narrativeText.setVisible(false)
+                this.player.statusText.setVisible(true)
+                this.player.statusText.setDepth(10)
+                this.player.startTextAnimation()
+            }
+        })
     
         this.keyR = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.R)
         this.keyB = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.B)
@@ -107,11 +110,11 @@ class Play extends Phaser.Scene {
 
     update() {
         // update player and enemy states
-        if (!this.gameOver && !this.success) {
-            this.player.update();
-            this.enemy1.update();
-            this.enemy2.update();
-            this.enemy3.update();
+        if (!this.gameOver && !this.success && this.cutsceneOver) {
+            this.player.update()
+            this.enemy1.update()
+            this.enemy2.update()
+            this.enemy3.update()
     
             //condition
             const exitDistance = Phaser.Math.Distance.Between(this.player.x, this.player.y, this.exit.x, this.exit.y);
@@ -144,13 +147,32 @@ class Play extends Phaser.Scene {
     }
     
     // Method to handle the game over logic
-    triggerGameOver() {
-        this.gameOver = true;
-        this.sound.play('spot')
-        this.add.text(this.cameras.main.centerX, this.cameras.main.centerY, 'You have been spotted! Press (R) to Restart or (B) to get to Menu', {
-            fontSize: '16px'
-        }).setOrigin(0.5).setScrollFactor(0)
-    }
+// Method to handle the game over logic
+triggerGameOver() {
+    this.gameOver = true;
+    this.sound.play('spot');
+    let spottedText = this.add.text(this.cameras.main.centerX, this.cameras.main.centerY, 'You have been spotted!', {
+        fontSize: '48px',
+        fill: '#FF0000',
+        fontStyle: 'bold'
+    }).setOrigin(0.5).setScrollFactor(0)
+
+  
+    this.tweens.add({
+        targets: spottedText,
+        x: { from: this.cameras.main.centerX - 200, to: this.cameras.main.centerX },
+        y: { from: this.cameras.main.centerY - 200, to: this.cameras.main.centerY },
+        scale: { start: 0, from: 0.5, to: 1 },
+        angle: 360,
+        duration: 2000,
+        ease: 'Cubic.easeOut',
+    })
+    let restartText = this.add.text(this.cameras.main.centerX, this.cameras.main.centerY + 60, 'Press (R) to Restart or (B) to get to Menu', {
+        fontSize: '16px',
+        fill: '#FFFFFF'
+    }).setOrigin(0.5).setScrollFactor(0)
+}
+
     
     // Method to handle player input for restarting or returning to the menu
     handleInput() {

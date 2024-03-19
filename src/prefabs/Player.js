@@ -6,18 +6,33 @@ class Player extends Phaser.GameObjects.Sprite {
         this.body.setCollideWorldBounds(true)
         // Player properties
         this.isCrouching = false // Initial state - not crouching
-        this.speed = 500 // Default speed when standing
+        this.speed = 50 // Default speed when standing
 
         // Define default and crouching speed values
         this.defaultSpeed = 40
         this.crouchSpeed = 25 // Speed while crouching
+
+        this.textAnimating = false
         
         // Player controls
         this.cursors = scene.input.keyboard.createCursorKeys()
         this.crouchKey = scene.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.CTRL) 
-        this.statusText = scene.add.text(10, 10, 'Status: Standing', { fontSize: '16px', fill: '#FFFFFF' })
-        this.statusText.setScrollFactor(0)
-        this.statusText.setVisible(false)
+        this.statusText = scene.add.text(10, 10, 'Status: Standing', {
+            fontSize: '16px',
+            fill: '#FFFFFF'
+        }).setScrollFactor(0).setVisible(true)
+
+
+        scene.tweens.add({
+            targets: this.statusText,
+            alpha: { start: 0, from: 1, to: 0 }, 
+            duration: 2000, 
+            ease: 'Expo.easeInOut', 
+            repeat: 0, 
+            yoyo: true, 
+            onStart: () => { this.statusText.setVisible(true); },
+            onComplete: () => { this.statusText.setVisible(false); }
+        })
 
         this.setTexture('stand')
         this.setScale(2.5)
@@ -85,4 +100,22 @@ class Player extends Phaser.GameObjects.Sprite {
         return this.cursors.left.isDown || this.cursors.right.isDown || 
                this.cursors.up.isDown || this.cursors.down.isDown;
     }
+
+    startTextAnimation() {
+        if (!this.textAnimating) {
+            this.textAnimating = true
+            this.scene.tweens.add({
+                targets: this.statusText,
+                alpha: { from: 1, to: 0 },
+                duration: 2000,
+                ease: 'Expo.easeInOut',
+                repeat: -1, 
+                yoyo: true,
+                onStart: () => {
+                    this.statusText.setVisible(true);
+                }
+            })
+        }
+    }
+    
 }
