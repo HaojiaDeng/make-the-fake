@@ -118,8 +118,8 @@ class Play extends Phaser.Scene {
     
             //condition
             const exitDistance = Phaser.Math.Distance.Between(this.player.x, this.player.y, this.exit.x, this.exit.y);
-            if (exitDistance <= 40) {
-                this.success = true;
+            if (exitDistance <= 75) {
+                this.success = true
                 this.add.text(this.cameras.main.centerX, this.cameras.main.centerY, 'Congrats!\nPress (R) to Restart or (B) to get to Menu', {
                     fontSize: '16px'
                 }).setOrigin(0.5).setScrollFactor(0)
@@ -130,7 +130,7 @@ class Play extends Phaser.Scene {
         } 
     
         // Regardless of the game state, handle player input for restart or return to menu
-        this.handleInput();
+        this.handleInput()
     }
     
     // Method to check if the player is detected by any enemy
@@ -138,7 +138,7 @@ class Play extends Phaser.Scene {
         let enemies = [this.StationaryEnemy1, this.StationaryEnemy2, this.enemy1, this.enemy2, this.enemy3]
         enemies.forEach((enemy) => {
             const distance = Phaser.Math.Distance.Between(this.player.x, this.player.y, enemy.x, enemy.y)
-            const detectionRange = this.player.isCrouching ? 10 : 50
+            const detectionRange = this.player.isCrouching ? 60 : 150
             if (distance < detectionRange) {
                 this.triggerGameOver()
                 return
