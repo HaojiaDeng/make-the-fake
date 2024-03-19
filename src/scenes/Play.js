@@ -37,9 +37,9 @@ class Play extends Phaser.Scene {
         this.add.image(640, 675, 'barrier').setOrigin(0.5, 0)
         this.add.image(500,500,'campfire')
         
-        this.tower1 = this.physics.add.staticSprite(70, 480, 'tower').setOrigin(0.5, 0).setScale(0.4);
-        this.tower2 = this.physics.add.staticSprite(70, 100, 'tower').setOrigin(0.5, 0).setScale(0.4);
-        this.tower3 = this.physics.add.staticSprite(1100, 40, 'tower').setOrigin(0.5, 0).setScale(0.4);
+        this.tower1 = this.physics.add.staticSprite(70, 480, 'tower').setOrigin(0.5, 0).setScale(0.4)
+        this.tower2 = this.physics.add.staticSprite(70, 100, 'tower').setOrigin(0.5, 0).setScale(0.4)
+        this.tower3 = this.physics.add.staticSprite(1100, 40, 'tower').setOrigin(0.5, 0).setScale(0.4)
         this.tent1 = this.physics.add.staticSprite(600, 430, 'tent').setOrigin(0.5, 0).setScale(2).setOffset(0,70)
         this.tent2 = this.physics.add.staticSprite(600, 330, 'tent').setOrigin(0.5, 0).setScale(2).setOffset(0,70)
         this.tree1 = this.physics.add.staticSprite(720, 330, 'tree').setOrigin(0.5, 0).setScale(2).setOffset(0,140)
@@ -54,13 +54,13 @@ class Play extends Phaser.Scene {
         this.particles = this.add.particles('flare')
         const flame = this.add.particles(495, 500, 'flares',
             {
-                color: [ 0x040d61, 0xfacc22, 0xf89800, 0xf83600, 0x9f0404, 0x4b4a4f, 0x353438, 0x040404 ],
-                lifespan: 1500,
-                angle: { min: -90, max: -50 },
-                scale: 0.75,
-                speed: { min: 10, max: 30 },
-                advance: 2000,
-                blendMode: 'ADD'
+            color: [ 0x040d61, 0xfacc22, 0xf89800, 0xf83600, 0x9f0404, 0x4b4a4f, 0x353438, 0x040404 ],
+            lifespan: 1500,
+            angle: { min: -90, max: -50 },
+            scale: 0.75,
+            speed: { min: 10, max: 30 },
+            advance: 2000,
+            blendMode: 'ADD'
             })
         //adding enemies
         this.StationaryEnemy1 = new StationaryEnemy(this,530,400,'smoke2')
@@ -96,6 +96,20 @@ class Play extends Phaser.Scene {
     
         // Create an empty group to store enemies
         this.enemies = this.add.group()
+
+
+        // timer
+        this.timeText = this.add.text(450, 16, 'Time: 90', {
+            fontSize: '32px',
+            fill: '#000'
+        }).setScrollFactor(0).setDepth(30)
+        this.initialTime = 90
+        this.timedEvent = this.time.addEvent({
+            delay: 1000,
+            callback: this.updateTimer,
+            callbackScope: this,
+            loop: true
+        })
         this.gameOver = false
     }
     
@@ -110,7 +124,7 @@ class Play extends Phaser.Scene {
            
     
             //condition
-            const exitDistance = Phaser.Math.Distance.Between(this.player.x, this.player.y, this.exit.x, this.exit.y);
+            const exitDistance = Phaser.Math.Distance.Between(this.player.x, this.player.y, this.exit.x, this.exit.y)
             if (exitDistance <= 75) {
                 this.success = true
                 this.add.text(this.cameras.main.centerX, this.cameras.main.centerY, 'Congrats!\nPress (R) to Restart or (B) to get to Menu', {
@@ -140,8 +154,8 @@ class Play extends Phaser.Scene {
     }
     // Method to handle the game over logic
     triggerGameOver() {
-        this.gameOver = true;
-        this.sound.play('spot');
+        this.gameOver = true
+        this.sound.play('spot')
         let spottedText = this.add.text(this.cameras.main.centerX, this.cameras.main.centerY, 'You have been spotted!', {
             fontSize: '48px',
             fill: '#FF0000',
@@ -174,5 +188,41 @@ class Play extends Phaser.Scene {
             this.scene.start('menuScene')
         }
     }
+
+
+    updateTimer() {
+        this.initialTime -= 1
+        this.timeText.setText('Time: ' + this.initialTime)
+    
+        if (this.initialTime <= 30) {
+            this.timeText.setFill('#FF0000')
+            if (!this.isTweensAdded) {
+                this.isTweensAdded = true
+                this.tweens.add({
+                    targets: this.timeText,
+                    scaleX: 1.2,
+                    scaleY: 1.2,
+                    yoyo: true,
+                    repeat: -1,
+                    ease: 'Sine.easeInOut',
+                    duration: 500,
+                })
+            }
+        }
+    
+        if (this.initialTime <= 0) {
+            this.timedEvent.remove()
+            this.gameOver = true
+            this.timeText.setText('Time is out!\nPress (R) to Restart or (B) to get to Menu').setPosition(this.cameras.main.centerX, this.cameras.main.centerY).setOrigin(0.5, 0.5).setFontSize('18px')
+            this.tweens.killTweensOf(this.timeText)
+            this.handleGameOver()
+        }
+    }
+    handleGameOver() {
+        this.player.body.setVelocity(0, 0)
+        this.player.body.moves = false
+    }
+    
+    
     
 }    

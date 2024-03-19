@@ -1,6 +1,6 @@
 class Tutorial extends Phaser.Scene {
     constructor() {
-        super("tutorialScene");
+        super("tutorialScene")
     }
     preload(){
         this.load.image('BG2',"./assets/BG2.png")
@@ -27,7 +27,7 @@ class Tutorial extends Phaser.Scene {
         
         `, menuConfig).setOrigin(0.5)
 
-        menuConfig.fontSize = "16px";
+        menuConfig.fontSize = "16px"
         this.add.text(500, 400, "Press 'B' to get back to the Menu page", menuConfig).setOrigin(0.5)
         keyB = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.B)
     }

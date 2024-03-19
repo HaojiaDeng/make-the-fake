@@ -31,8 +31,8 @@ class Player extends Phaser.GameObjects.Sprite {
             ease: 'Expo.easeInOut', 
             repeat: 0, 
             yoyo: true, 
-            onStart: () => { this.statusText.setVisible(true); },
-            onComplete: () => { this.statusText.setVisible(false); }
+            onStart: () => { this.statusText.setVisible(true) },
+            onComplete: () => { this.statusText.setVisible(false) }
         })
 
         this.setTexture('stand')
@@ -99,7 +99,7 @@ class Player extends Phaser.GameObjects.Sprite {
 
     isMoving() {
         return this.cursors.left.isDown || this.cursors.right.isDown || 
-               this.cursors.up.isDown || this.cursors.down.isDown;
+               this.cursors.up.isDown || this.cursors.down.isDown
     }
 
     startTextAnimation() {
@@ -113,7 +113,7 @@ class Player extends Phaser.GameObjects.Sprite {
                 repeat: -1, 
                 yoyo: true,
                 onStart: () => {
-                    this.statusText.setVisible(true);
+                    this.statusText.setVisible(true)
                 }
             })
         }
